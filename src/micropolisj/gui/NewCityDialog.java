@@ -71,6 +71,10 @@ public class NewCityDialog extends JDialog
 		levelBox.add(Box.createVerticalGlue());
 		setGameLevel(GameLevel.MIN_LEVEL);
 
+		Box featureBox = new Box(BoxLayout.Y_AXIS);
+		featureBox.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
+		p2.add(featureBox, BorderLayout.CENTER);
+
 		JPanel buttonPane = new JPanel();
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
