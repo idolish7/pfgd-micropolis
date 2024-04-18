@@ -8,15 +8,37 @@
 
 package micropolisj.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
+import static micropolisj.gui.MainWindow.EXTENSION;
+
+import java.awt.BorderLayout;
+import java.awt.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.ResourceBundle;
+import java.util.Stack;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import micropolisj.engine.*;
-import static micropolisj.gui.MainWindow.EXTENSION;
+import micropolisj.engine.GameLevel;
+import micropolisj.engine.MapGenerator;
+import micropolisj.engine.Micropolis;
 
 public class NewCityDialog extends JDialog
 {
@@ -26,6 +48,8 @@ public class NewCityDialog extends JDialog
 	Stack<Micropolis> nextMaps = new Stack<Micropolis>();
 	OverlayMapView mapPane;
 	HashMap<Integer,JRadioButton> levelBtns = new HashMap<Integer,JRadioButton>();
+	HashMap<Integer,JToggleButton> featureBtns = new HashMap<Integer,JToggleButton>();
+
 
 	static final ResourceBundle strings = MainWindow.strings;
 
@@ -42,7 +66,12 @@ public class NewCityDialog extends JDialog
 		getContentPane().add(p1, BorderLayout.CENTER);
 
 		engine = new Micropolis();
-		new MapGenerator(engine).generateNewCity();
+
+		setFeaturePresence(0, true);
+		setFeaturePresence(1, true);
+		setFeaturePresence(2, true);
+
+		new MapGenerator(engine).generateNewCity(false, false, false);
 
 		mapPane = new OverlayMapView(engine);
 		mapPane.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -74,6 +103,24 @@ public class NewCityDialog extends JDialog
 		Box featureBox = new Box(BoxLayout.Y_AXIS);
 		featureBox.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 		p2.add(featureBox, BorderLayout.CENTER);
+		
+		featureBox.add(Box.createVerticalGlue());
+		for (int feature = 0; feature < 3; feature++) 
+		{
+			final int x = feature;
+			String resourceName = "feature.number."+feature;
+			final JToggleButton toggleButton = new JToggleButton(strings.getString(resourceName));
+			toggleButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				setFeaturePresence(x, toggleButton.isSelected());
+			}});
+			featureBox.add(toggleButton);
+			featureBtns.put(feature, toggleButton);
+		}
+		featureBox.add(Box.createVerticalGlue());
+		setFeaturePresence(0, false);
+		setFeaturePresence(1, false);
+		setFeaturePresence(2, false);
 
 		JPanel buttonPane = new JPanel();
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -155,7 +202,10 @@ public class NewCityDialog extends JDialog
 		if (nextMaps.isEmpty())
 		{
 			Micropolis m = new Micropolis();
-			new MapGenerator(m).generateNewCity();
+		
+		ArrayList<Boolean> featuresEnabledList = new ArrayList<Boolean>(3);
+		featuresEnabledList = getFeaturePresences();
+			new MapGenerator(m).generateNewCity(featuresEnabledList.get(0), featuresEnabledList.get(1), featuresEnabledList.get(2));
 			nextMaps.add(m);
 		}
 
@@ -233,5 +283,26 @@ public class NewCityDialog extends JDialog
 		{
 			levelBtns.get(lev).setSelected(lev == level);
 		}
+	}
+
+	private void setFeaturePresence(Integer feature, boolean value)
+	{
+		for (int key = 0; key <= 2; key++) {
+			if (!featureBtns.containsKey(key)) {
+				JToggleButton toggleButton = new JToggleButton("Button " + key);
+				featureBtns.put(key, toggleButton);
+			}
+		}
+		featureBtns.get(feature).setSelected(value);
+	}
+
+	public ArrayList getFeaturePresences()
+	{
+		ArrayList<Boolean> featuresEnabledList = new ArrayList<Boolean>(3);
+		for (int feature : featureBtns.keySet())
+		{
+			featuresEnabledList.add(featureBtns.get(feature).isSelected());
+		}
+		return featuresEnabledList;
 	}
 }
