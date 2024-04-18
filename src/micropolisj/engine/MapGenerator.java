@@ -52,15 +52,15 @@ public class MapGenerator
 	/**
 	 * Generate a random map terrain.
 	 */
-	public void generateNewCity()
+	public void generateNewCity(boolean islandsEnabled, boolean riversEnabled, boolean lakesEnabled)
 	{
 		long r = Micropolis.DEFAULT_PRNG.nextLong();
-		generateSomeCity(r);
+		generateSomeCity(r, islandsEnabled, riversEnabled, lakesEnabled);
 	}
 
-	public void generateSomeCity(long r)
+	public void generateSomeCity(long r, boolean islandsEnabled, boolean riversEnabled, boolean lakesEnabled)
 	{
-		generateMap(r);
+		generateMap(r,  islandsEnabled, riversEnabled, lakesEnabled);
 		engine.fireWholeMapChanged();
 	}
 
@@ -76,17 +76,14 @@ public class MapGenerator
 
 	int lakeLevel = -1; //level for lake creation; -1==auto, 0==none, >0==level
 
-	void generateMap(long r)
+	void generateMap(long r, boolean islandsEnabled, boolean riversEnabled, boolean lakesEnabled)
 	{
 		PRNG = new Random(r);
 
-		if (createIsland == CreateIsland.SELDOM)
+		if (islandsEnabled)
 		{
-			if (PRNG.nextInt(100) < 10) //chance that island is generated
-			{
-				makeIsland();
-				return;
-			}
+			makeIsland();
+			return;
 		}
 
 		if (createIsland == CreateIsland.ALWAYS)
@@ -100,12 +97,12 @@ public class MapGenerator
 
 		getRandStart();
 
-		if (curveLevel != 0)
+		if (curveLevel != 0 && riversEnabled)
 		{
 			doRivers();
 		}
 
-		if (lakeLevel != 0)
+		if (lakeLevel != 0 && lakesEnabled)
 		{
 			makeLakes();
 		}
