@@ -51,7 +51,11 @@ public class MapGenerator
 
 	/**
 	 * Generate a random map terrain.
+	 * 
+	 * islandsEnabled, riversEnabled, and lakesEnabled all come from NewCityDialog.java, 
+	 * where their values are determined by user input
 	 */
+	
 	public void generateNewCity(boolean islandsEnabled, boolean riversEnabled, boolean lakesEnabled)
 	{
 		long r = Micropolis.DEFAULT_PRNG.nextLong();
@@ -80,6 +84,7 @@ public class MapGenerator
 	{
 		PRNG = new Random(r);
 
+		// From island button press
 		if (islandsEnabled)
 		{
 			makeIsland();
@@ -97,11 +102,13 @@ public class MapGenerator
 
 		getRandStart();
 
+		// From rivers button press
 		if (curveLevel != 0 && riversEnabled)
 		{
 			doRivers();
 		}
 
+	// From lakes button press
 		if (lakeLevel != 0 && lakesEnabled)
 		{
 			makeLakes();

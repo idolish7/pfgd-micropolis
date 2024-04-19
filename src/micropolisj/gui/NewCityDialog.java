@@ -100,10 +100,12 @@ public class NewCityDialog extends JDialog
 		levelBox.add(Box.createVerticalGlue());
 		setGameLevel(GameLevel.MIN_LEVEL);
 
+		// Creates the UI
 		Box featureBox = new Box(BoxLayout.Y_AXIS);
 		featureBox.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 		p2.add(featureBox, BorderLayout.CENTER);
 		
+		// Button logic
 		featureBox.add(Box.createVerticalGlue());
 		for (int feature = 0; feature < 3; feature++) 
 		{
@@ -118,6 +120,8 @@ public class NewCityDialog extends JDialog
 			featureBtns.put(feature, toggleButton);
 		}
 		featureBox.add(Box.createVerticalGlue());
+
+		// Sets initial values for the features
 		setFeaturePresence(0, false);
 		setFeaturePresence(1, false);
 		setFeaturePresence(2, false);
@@ -285,6 +289,7 @@ public class NewCityDialog extends JDialog
 		}
 	}
 
+	// Setter for the feature presence hash
 	private void setFeaturePresence(Integer feature, boolean value)
 	{
 		for (int key = 0; key <= 2; key++) {
@@ -296,6 +301,7 @@ public class NewCityDialog extends JDialog
 		featureBtns.get(feature).setSelected(value);
 	}
 
+	// Getter for the feature presences hash
 	public ArrayList getFeaturePresences()
 	{
 		ArrayList<Boolean> featuresEnabledList = new ArrayList<Boolean>(3);
